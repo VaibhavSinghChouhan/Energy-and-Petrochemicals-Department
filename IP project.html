@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PID050: Extended Maintenance System</title>
+    <style>
+        :root {
+            --primary-color: #0056b3;
+            --secondary-color: #f4f4f4;
+            --critical-color: #dc3545;
+            --safe-color: #28a745;
+            --warning-color: #ffc107;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            background-color: #eef2f5;
+            color: #333;
+        }
+
+        /* Header */
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .home-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        
+        .home-btn:hover { background: rgba(255,255,255,0.3); }
+
+        /* Main Container */
+        .container {
+            max-width: 1100px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        /* Dashboard Grid (Menu) */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .card {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-top: 5px solid var(--primary-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0,0,0,0.15);
+        }
+
+        .card-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        /* Tab Sections */
+        .tab-section {
+            display: none;
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            animation: slideUp 0.3s ease-out;
+        }
+
+        .tab-section.active { display: block; }
+
+        /* Tables */
+        table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background-color: #f1f3f5; color: #495057; }
+        
+        /* Badges */
+        .badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: white;
+        }
+        .bg-red { background-color: var(--critical-color); }
+        .bg-orange { background-color: #fd7e14; }
+        .bg-green { background-color: var(--safe-color); }
+        .bg-yellow { background-color: var(--warning-color); color: #333; }
+
+        /* Forms */
+        .form-group { margin-bottom: 1rem; }
+        label { display: block; margin-bottom: 0.5rem; font-weight: 600; }
+        input, select, textarea {
+            width: 100%; padding: 10px; border: 1px solid #ccc;
+            border-radius: 4px; box-sizing: border-box;
+        }
+        button.action-btn {
+            background-color: var(--primary-color); color: white;
+            border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer;
+        }
+
+        /* Analytics Bar */
+        .stat-bar-container {
+            background-color: #e9ecef;
+            border-radius: 5px;
+            height: 20px;
+            width: 100%;
+            margin-top: 5px;
+        }
+        .stat-bar {
+            height: 100%;
+            border-radius: 5px;
+            background-color: var(--safe-color);
+            text-align: center;
+            color: white;
+            font-size: 12px;
+            line-height: 20px;
+        }
+
+        /* Back Button inside tabs */
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>⚡ Maintenance Planner System</h1>
+    <button class="home-btn" onclick="showTab('dashboard')">🏠 Dashboard</button>
+</header>
+
+<div class="container">
+
+    <div id="dashboard" class="tab-section active" style="background: transparent; box-shadow: none; padding: 0;">
+        <div class="dashboard-grid">
+            <div class="card" onclick="showTab('consumer')">
+                <span class="card-icon">👤</span>
+                <h3>Consumer Report</h3>
+                <p>Log a complaint</p>
+            </div>
+
+            <div class="card" onclick="showTab('staff')">
+                <span class="card-icon">🛠</span>
+                <h3>Active Tasks</h3>
+                <p>3 Critical Pending</p>
+            </div>
+
+            <div class="card" onclick="showTab('inventory')" style="border-top-color: #28a745;">
+                <span class="card-icon">📦</span>
+                <h3>Asset Inventory</h3>
+                <p>Manage Spare Parts</p>
+            </div>
+
+            <div class="card" onclick="showTab('planner')" style="border-top-color: #6f42c1;">
+                <span class="card-icon">📅</span>
+                <h3>Planner</h3>
+                <p>Scheduled Maintenance</p>
+            </div>
+
+            <div class="card" onclick="showTab('analytics')" style="border-top-color: #17a2b8;">
+                <span class="card-icon">📊</span>
+                <h3>Admin Analytics</h3>
+                <p>System Efficiency</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="consumer" class="tab-section">
+        <span class="back-link" onclick="showTab('dashboard')">← Back to Dashboard</span>
+        <h2>📝 Report Maintenance Issue</h2>
+        <form onsubmit="alert('Report submitted!'); showTab('dashboard'); return false;">
+            <div class="form-group">
+                <label>Issue Type</label>
+                <select><option>Sparking Line (Critical)</option><option>Power Cut</option><option>Meter Fault</option></select>
+            </div>
+            <div class="form-group"><label>Location</label><input type="text" placeholder="Pole No / Address"></div>
+            <button class="action-btn">Submit</button>
+        </form>
+    </div>
+
+    <div id="staff" class="tab-section">
+        <span class="back-link" onclick="showTab('dashboard')">← Back to Dashboard</span>
+        <h2>📋 Priority Task List</h2>
+        <table>
+            <thead><tr><th>ID</th><th>Issue</th><th>Priority</th><th>Status</th></tr></thead>
+            <tbody>
+                <tr><td>#101</td><td>Live Wire</td><td><span class="badge bg-red">CRITICAL</span></td><td><button class="action-btn" style="padding: 5px 10px; font-size: 0.8rem;">Start</button></td></tr>
+                <tr><td>#102</td><td>Transformer Heat</td><td><span class="badge bg-orange">HIGH</span></td><td><button class="action-btn" style="padding: 5px 10px; font-size: 0.8rem;">Start</button></td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div id="inventory" class="tab-section">
+        <span class="back-link" onclick="showTab('dashboard')">← Back to Dashboard</span>
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h2>📦 Asset & Inventory Management</h2>
+            <button class="action-btn" style="background-color: #28a745;">+ Add Stock</button>
+        </div>
+        <p>Ensure critical parts are available to prevent maintenance delays.</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Item Name</th>
+                    <th>Category</th>
+                    <th>Quantity</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>11kV Insulator</td>
+                    <td>Ceramics</td>
+                    <td>450 units</td>
+                    <td><span class="badge bg-green">In Stock</span></td>
+                </tr>
+                <tr>
+                    <td>Copper Wire (Guage 4)</td>
+                    <td>Cabling</td>
+                    <td>12 meters</td>
+                    <td><span class="badge bg-red">LOW STOCK</span></td>
+                </tr>
+                <tr>
+                    <td>Transformer Oil</td>
+                    <td>Fluids</td>
+                    <td>50 Liters</td>
+                    <td><span class="badge bg-yellow">Reorder Soon</span></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div id="planner" class="tab-section">
+        <span class="back-link" onclick="showTab('dashboard')">← Back to Dashboard</span>
+        <h2>📅 Maintenance Planner</h2>
+        <p>Scheduled preventive maintenance to reduce accident cases.</p>
+        
+        <div style="background: #f8f9fa; padding: 15px; border-left: 4px solid #0056b3; margin-bottom: 10px;">
+            <strong>Today (Dec 15)</strong>
+            <div style="margin-top: 5px;">• Sub-station A: Oil Check (10:00 AM)</div>
+            <div style="margin-top: 5px;">• Sector 4: Tree Trimming near lines (02:00 PM)</div>
+        </div>
+
+        <div style="background: #fff; border: 1px solid #ddd; padding: 15px; margin-bottom: 10px;">
+            <strong>Tomorrow (Dec 16)</strong>
+            <div style="margin-top: 5px;">• Feeder Pillar Maintenance: Zone B</div>
+        </div>
+    </div>
+
+    <div id="analytics" class="tab-section">
+        <span class="back-link" onclick="showTab('dashboard')">← Back to Dashboard</span>
+        <h2>📊 System Analytics & Impact</h2>
+        <p>Maturity based on implementation and efficiency analysis.</p>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+            <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px;">
+                <h3>Task Completion Rate</h3>
+                <label>Critical Tasks (95%)</label>
+                <div class="stat-bar-container"><div class="stat-bar" style="width: 95%; background: #28a745;">95%</div></div>
+                <br>
+                <label>Normal Tasks (60%)</label>
+                <div class="stat-bar-container"><div class="stat-bar" style="width: 60%; background: #fd7e14;">60%</div></div>
+            </div>
+
+            <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px;">
+                <h3>Accident Reduction</h3>
+                <h1 style="color: var(--primary-color); font-size: 3rem; margin: 10px 0;">-40%</h1>
+                <p>Decrease in electrical accidents since system implementation.</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    function showTab(tabId) {
+        // Hide all sections
+        const sections = document.querySelectorAll('.tab-section');
+        sections.forEach(section => section.classList.remove('active'));
+        
+        // Show the selected section
+        document.getElementById(tabId).classList.add('active');
+        
+        // Optional: Scroll to top
+        window.scrollTo(0, 0);
+    }
+</script>
+
+</body>
+</html>
